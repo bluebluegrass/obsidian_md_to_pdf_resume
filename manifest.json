@@ -1,0 +1,9 @@
+{
+  "id": "resume-pdf-exporter",
+  "name": "Resume PDF Exporter",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Export the current resume note to a one-page PDF using a local Python renderer.",
+  "author": "Simeng Dai",
+  "isDesktopOnly": true
+}
