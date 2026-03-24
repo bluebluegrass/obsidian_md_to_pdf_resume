@@ -80,6 +80,11 @@ npm test
 ## Community Submission
 See [docs/community-submission.md](docs/community-submission.md) for the exact release and review checklist used for the Obsidian community plugin directory.
 
+Additional publishing docs:
+- [Community PR draft](docs/obsidian-releases-submission-draft.md)
+- [Suggested `0.1.1` plan](docs/release-0.1.1-plan.md)
+- [Screenshot plan](docs/screenshots-plan.md)
+
 ## Notes
 - Version 1 uses the bundled `scripts/render_resume_pdf.py` helper.
 - The plugin is intentionally scoped to resume notes, not general markdown export.
