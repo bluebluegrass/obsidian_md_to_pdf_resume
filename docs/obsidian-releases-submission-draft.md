@@ -45,7 +45,7 @@ It is designed for users who maintain resumes as markdown notes and need more co
 
 - Desktop only
 - Requires a local Python interpreter with `reportlab` installed
-- Supports export from ribbon, status bar, file menu, and command palette
+- Supports export from the command palette, file menu, and status bar
 ```
 
 ## Final Pre-PR Checks

@@ -5,11 +5,11 @@ Resume PDF Exporter is a desktop-only Obsidian plugin for people who keep job-ap
 Instead of relying on generic markdown-to-PDF output, the plugin uses a resume-specific renderer with controlled typography, spacing, and section hierarchy. The renderer automatically adjusts scale so the resume stays on a single page whenever it can fit safely.
 
 ## Features
-- One-click export from the ribbon, status bar, file menu, or command palette
+- One-click export from the status bar, file menu, or command palette
 - One-page PDF output with automatic scale adjustment to fit dense resumes
-- Ribbon button and command palette export
 - Status bar one-click button
 - File menu action on markdown files
+- Command palette command
 - Resume-specific markdown parsing and validation
 - Same-folder or fixed-folder PDF output
 - Optional open-after-export behavior
@@ -60,7 +60,7 @@ Additional recommended screenshots for later:
 
 ## Usage
 - Open a resume note in Obsidian.
-- Click the ribbon icon, the status bar button, or run `Resume: Convert current note to PDF`.
+- Click the status bar button, use the file menu, or run `Resume: Convert current note to PDF`.
 - The plugin writes a PDF next to the note by default.
 - The PDF is rendered to stay on one page, with the size adjusted automatically when needed.
 
