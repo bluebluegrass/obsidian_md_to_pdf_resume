@@ -32,11 +32,14 @@ Configure the Python executable, output mode, overwrite behavior, and renderer s
 
 ![Resume PDF Exporter plugin settings](docs/images/plugin-settings.png)
 
+### Exported PDF result
+The plugin generates a one-page PDF version of the current resume note.
+
+![Generated resume PDF output](docs/images/exported-pdf.png)
+
 Additional recommended screenshots for later:
 - `docs/images/status-bar-button.png`
   - Show the visible one-click export button in the status bar.
-- `docs/images/exported-pdf.png`
-  - Show the generated one-page PDF next to the markdown note.
 
 ## Requirements
 - Obsidian Desktop
