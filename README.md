@@ -21,9 +21,13 @@ Instead of relying on generic markdown-to-PDF output, the plugin uses a resume-s
 - This plugin keeps the export flow inside Obsidian so you can edit and generate the final PDF without switching tools.
 
 ## Screenshots
-Add screenshots under `docs/images/` and update this section with real image embeds before community submission.
 
-Recommended screenshots:
+### Export from the file menu
+Export a resume PDF directly from the Obsidian file menu.
+
+![Export resume PDF from the Obsidian file menu](docs/images/file-menu-export.png)
+
+Additional recommended screenshots for later:
 - `docs/images/status-bar-button.png`
   - Show the visible one-click export button in the status bar.
 - `docs/images/exported-pdf.png`
