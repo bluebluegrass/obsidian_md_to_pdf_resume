@@ -1,6 +1,8 @@
 # Resume PDF Exporter
 
-Desktop-only Obsidian plugin that exports the active resume note to a one-page PDF using a local Python + ReportLab renderer. The renderer automatically adjusts typography scale so the resume fits on a single page whenever the content can be fit safely.
+Resume PDF Exporter is a desktop-only Obsidian plugin for people who keep job-application resumes as markdown notes and want a reliable, one-click PDF export workflow inside their vault.
+
+Instead of relying on generic markdown-to-PDF output, the plugin uses a resume-specific renderer with controlled typography, spacing, and section hierarchy. The renderer automatically adjusts scale so the resume stays on a single page whenever it can fit safely.
 
 ## Features
 - One-click export from the ribbon, status bar, file menu, or command palette
@@ -12,6 +14,22 @@ Desktop-only Obsidian plugin that exports the active resume note to a one-page P
 - Same-folder or fixed-folder PDF output
 - Optional open-after-export behavior
 - External renderer path configuration
+
+## Why This Plugin Exists
+- Resume notes often need more control than general markdown export.
+- A resume should stay compact, readable, and ATS-friendly.
+- This plugin keeps the export flow inside Obsidian so you can edit and generate the final PDF without switching tools.
+
+## Screenshots
+Add screenshots under `docs/images/` and update this section with real image embeds before community submission.
+
+Recommended screenshots:
+- `docs/images/status-bar-button.png`
+  - Show the visible one-click export button in the status bar.
+- `docs/images/exported-pdf.png`
+  - Show the generated one-page PDF next to the markdown note.
+- `docs/images/plugin-settings.png`
+  - Show Python path, output mode, and renderer settings.
 
 ## Requirements
 - Obsidian Desktop
@@ -36,6 +54,22 @@ Desktop-only Obsidian plugin that exports the active resume note to a one-page P
 - The plugin writes a PDF next to the note by default.
 - The PDF is rendered to stay on one page, with the size adjusted automatically when needed.
 
+## Installation
+
+### Manual installation
+1. Download the latest release assets:
+   - `main.js`
+   - `manifest.json`
+   - `styles.css`
+2. Create a folder named `resume-pdf-exporter` in your vault under `.obsidian/plugins/`.
+3. Copy the release assets into that folder.
+4. Copy `scripts/render_resume_pdf.py` into `.obsidian/plugins/resume-pdf-exporter/scripts/`.
+5. Enable the plugin under `Settings -> Community plugins`.
+
+### Python requirement
+- Configure the plugin to use a Python interpreter that already has `reportlab` installed.
+- On this project’s reference setup, `/opt/homebrew/bin/python3` is used.
+
 ## Development
 ```bash
 npm install
@@ -43,12 +77,8 @@ npm run build
 npm test
 ```
 
-## Public Release Checklist
-- Put this folder in a public GitHub repository
-- Keep `manifest.json`, `versions.json`, `README.md`, and `LICENSE` at the repo root
-- Create a GitHub release tagged exactly as the plugin version, for example `0.1.0`
-- Upload `manifest.json`, `main.js`, and `styles.css` to the release assets
-- Submit the plugin to the Obsidian community list via `obsidianmd/obsidian-releases`
+## Community Submission
+See [docs/community-submission.md](docs/community-submission.md) for the exact release and review checklist used for the Obsidian community plugin directory.
 
 ## Notes
 - Version 1 uses the bundled `scripts/render_resume_pdf.py` helper.
