@@ -10,7 +10,7 @@ Use this when opening a pull request against:
   "id": "resume-pdf-exporter",
   "name": "Resume PDF Exporter",
   "author": "Simeng Dai",
-  "description": "Obsidian plugin that exports structured resume notes to one-page PDF with one click.",
+  "description": "Exports structured resume notes to one-page PDF with one click.",
   "repo": "bluebluegrass/obsidian_md_to_pdf_resume"
 }
 ```
@@ -24,22 +24,34 @@ Add plugin: Resume PDF Exporter
 ## Suggested PR Body
 
 ```markdown
-## Checklist
+# I am submitting a new Community Plugin
 
-- [x] My plugin name and id are unique.
-- [x] I have tested the plugin on the latest Obsidian desktop version.
-- [x] I have included a valid open source license in the repository.
-- [x] The repository is public and contains the source code.
-- [x] `manifest.json` and `versions.json` are present at the repository root.
-- [x] A GitHub release exists with release assets for the submitted version.
-- [x] The release assets include `main.js`, `manifest.json`, and `styles.css`.
-- [x] The plugin has a README with installation and usage instructions.
+- [x] I attest that I have done my best to deliver a high-quality plugin, am proud of the code I have written, and would recommend it to others. I commit to maintaining the plugin and being responsive to bug reports. If I am no longer able to maintain it, I will make reasonable efforts to find a successor maintainer or withdraw the plugin from the directory.
 
-## Plugin Summary
+## Repo URL
 
-Resume PDF Exporter adds a one-click workflow for exporting structured resume notes in Obsidian to a one-page PDF.
+Link to my plugin:
+https://github.com/bluebluegrass/obsidian_md_to_pdf_resume
 
-It is designed for users who maintain resumes as markdown notes and need more control than generic markdown-to-PDF output. The plugin uses a resume-specific renderer and automatically adjusts scale so the final export stays on one page whenever the content can be fit safely.
+## Release Checklist
+- [x] I have tested the plugin on
+  - [ ] Windows
+  - [x] macOS
+  - [ ] Linux
+  - [ ] Android _(if applicable)_
+  - [ ] iOS _(if applicable)_
+- [x] My GitHub release contains all required files (as individual files, not just in the source.zip / source.tar.gz)
+  - [x] `main.js`
+  - [x] `manifest.json`
+  - [x] `styles.css` _(optional)_
+- [x] GitHub release name matches the exact version number specified in my manifest.json (_**Note:** Use the exact version number, don't include a prefix `v`_)
+- [x] The `id` in my `manifest.json` matches the `id` in the `community-plugins.json` file.
+- [x] My README.md describes the plugin's purpose and provides clear usage instructions.
+- [x] I have read the developer policies at https://docs.obsidian.md/Developer+policies, and have assessed my plugin's adherence to these policies.
+- [x] I have read the tips in https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines and have self-reviewed my plugin to avoid these common pitfalls.
+- [x] I have added a license in the LICENSE file.
+- [x] My project respects and is compatible with the original license of any code from other plugins that I'm using.
+      I have given proper attribution to these other projects in my `README.md`.
 
 ## Notes
 
