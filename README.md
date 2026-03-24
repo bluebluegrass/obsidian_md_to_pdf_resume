@@ -27,13 +27,16 @@ Export a resume PDF directly from the Obsidian file menu.
 
 ![Export resume PDF from the Obsidian file menu](docs/images/file-menu-export.png)
 
+### Plugin settings
+Configure the Python executable, output mode, overwrite behavior, and renderer settings.
+
+![Resume PDF Exporter plugin settings](docs/images/plugin-settings.png)
+
 Additional recommended screenshots for later:
 - `docs/images/status-bar-button.png`
   - Show the visible one-click export button in the status bar.
 - `docs/images/exported-pdf.png`
   - Show the generated one-page PDF next to the markdown note.
-- `docs/images/plugin-settings.png`
-  - Show Python path, output mode, and renderer settings.
 
 ## Requirements
 - Obsidian Desktop
@@ -73,6 +76,10 @@ Additional recommended screenshots for later:
 ### Python requirement
 - Configure the plugin to use a Python interpreter that already has `reportlab` installed.
 - On this project’s reference setup, `/opt/homebrew/bin/python3` is used.
+
+## Sample Files
+- [Sample Resume Markdown](docs/images/Sample%20Resume.md)
+- [Sample Resume PDF](docs/images/Sample%20Resume.pdf)
 
 ## Development
 ```bash
