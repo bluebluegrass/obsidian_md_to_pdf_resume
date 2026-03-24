@@ -6,7 +6,6 @@ export function parseResumeMarkdown(markdown: string): ResumeDocument {
 
   let name = "";
   let contact = "";
-  let foundName = false;
   let awaitingContact = false;
   const items: ResumeItem[] = [];
 
@@ -18,7 +17,6 @@ export function parseResumeMarkdown(markdown: string): ResumeDocument {
 
     if (line.startsWith("# ")) {
       name = line.slice(2).trim();
-      foundName = true;
       awaitingContact = true;
       continue;
     }

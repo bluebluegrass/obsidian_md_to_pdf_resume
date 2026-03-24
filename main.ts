@@ -1,4 +1,4 @@
-import { FileSystemAdapter, Plugin } from "obsidian";
+import { FileSystemAdapter, Plugin, TFile } from "obsidian";
 import { EXPORT_AND_OPEN_COMMAND_ID, EXPORT_COMMAND_ID, RIBBON_ICON } from "./src/constants/defaults";
 import { exportResume } from "./src/application/exportResume";
 import { DEFAULT_SETTINGS, type ResumePdfSettings } from "./src/settings";
@@ -15,42 +15,44 @@ export default class ResumePdfPlugin extends Plugin {
   async onload(): Promise<void> {
     await this.loadSettings();
 
-    this.addRibbonIcon(RIBBON_ICON, "Export resume PDF", async () => {
-      await this.runExport();
+    this.addRibbonIcon(RIBBON_ICON, "Export resume PDF", () => {
+      void this.runExport();
     });
 
     this.addCommand({
       id: EXPORT_COMMAND_ID,
       name: "Resume: Convert current note to PDF",
-      callback: async () => await this.runExport()
+      callback: () => {
+        void this.runExport();
+      }
     });
 
     this.addCommand({
       id: EXPORT_AND_OPEN_COMMAND_ID,
       name: "Resume: Convert current note to PDF and open",
-      callback: async () => await this.runExport(true)
+      callback: () => {
+        void this.runExport(true);
+      }
     });
 
     this.statusBarItemEl = this.addStatusBarItem();
-    this.statusBarItemEl.setText("Export Resume PDF");
+    this.statusBarItemEl.setText("Export resume PDF");
     this.statusBarItemEl.setAttribute("aria-label", "Export resume PDF");
-    this.statusBarItemEl.style.cursor = "pointer";
-    this.statusBarItemEl.addEventListener("click", async () => {
-      await this.runExport();
+    this.statusBarItemEl.addClass("resume-pdf-exporter-status");
+    this.statusBarItemEl.addEventListener("click", () => {
+      void this.runExport();
     });
 
     this.registerEvent(this.app.workspace.on("file-menu", (menu, file) => {
-      if (file.extension !== "md") {
+      if (!(file instanceof TFile) || file.extension !== "md") {
         return;
       }
       menu.addItem((item) => {
         item
           .setTitle("Export resume PDF")
           .setIcon(RIBBON_ICON)
-          .onClick(async () => {
-            const leaf = this.app.workspace.getMostRecentLeaf();
-            await leaf?.openFile(file);
-            await this.runExport();
+          .onClick(() => {
+            void this.exportFileFromMenu(file);
           });
       });
     }));
@@ -74,6 +76,14 @@ export default class ResumePdfPlugin extends Plugin {
       renderer: this.createRenderer(),
       openAfterExportOverride
     });
+  }
+
+  private async exportFileFromMenu(file: TFile): Promise<void> {
+    const leaf = this.app.workspace.getMostRecentLeaf();
+    if (leaf) {
+      await leaf.openFile(file);
+    }
+    await this.runExport();
   }
 
   private createRenderer(): ResumeRenderer {

@@ -58,7 +58,6 @@ function parseResumeMarkdown(markdown) {
   const lines = normalizeResumeMarkdown(markdown);
   let name = "";
   let contact = "";
-  let foundName = false;
   let awaitingContact = false;
   const items = [];
   for (const rawLine of lines) {
@@ -68,7 +67,6 @@ function parseResumeMarkdown(markdown) {
     }
     if (line.startsWith("# ")) {
       name = line.slice(2).trim();
-      foundName = true;
       awaitingContact = true;
       continue;
     }
@@ -151,7 +149,7 @@ async function buildOutputPath(params) {
 
 // src/infrastructure/openFile.ts
 async function openLocalFile(targetPath) {
-  const electron = require("electron");
+  const electron = await import("electron");
   const result = await electron.shell.openPath(targetPath);
   if (result) {
     throw new Error(result);
@@ -236,55 +234,55 @@ var ResumePdfSettingTab = class extends import_obsidian3.PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
     containerEl.addClass("resume-pdf-exporter-setting");
-    containerEl.createEl("h2", { text: "Resume PDF Exporter" });
+    new import_obsidian3.Setting(containerEl).setName("Resume PDF Exporter").setHeading();
     this.addOutputModeSetting();
-    this.addTextSetting("Fixed output folder", this.plugin.settings.fixedOutputFolder, async (value) => {
+    this.addTextSetting("Fixed output folder", this.plugin.settings.fixedOutputFolder, (value) => {
       this.plugin.settings.fixedOutputFolder = value.trim();
     }, "Used only when output mode is fixed folder.");
-    this.addToggleSetting("Overwrite existing PDFs", this.plugin.settings.overwriteExisting, async (value) => {
+    this.addToggleSetting("Overwrite existing PDFs", this.plugin.settings.overwriteExisting, (value) => {
       this.plugin.settings.overwriteExisting = value;
     });
-    this.addToggleSetting("Open PDF after export", this.plugin.settings.openAfterExport, async (value) => {
+    this.addToggleSetting("Open PDF after export", this.plugin.settings.openAfterExport, (value) => {
       this.plugin.settings.openAfterExport = value;
     });
     this.addRendererModeSetting();
-    this.addTextSetting("Python executable", this.plugin.settings.externalPythonPath, async (value) => {
+    this.addTextSetting("Python executable", this.plugin.settings.externalPythonPath, (value) => {
       this.plugin.settings.externalPythonPath = value.trim() || "python3";
     }, "Example: python3 or /usr/bin/python3");
-    this.addTextSetting("Renderer script path", this.plugin.settings.externalScriptPath, async (value) => {
+    this.addTextSetting("Renderer script path", this.plugin.settings.externalScriptPath, (value) => {
       this.plugin.settings.externalScriptPath = value.trim();
     }, "Relative to the plugin folder or an absolute path.");
   }
   addOutputModeSetting() {
     new import_obsidian3.Setting(this.containerEl).setName("Output mode").setDesc("Choose whether the PDF is saved next to the note or in a fixed folder.").addDropdown((dropdown) => {
-      dropdown.addOption("same-folder", "Same folder").addOption("fixed-folder", "Fixed folder").setValue(this.plugin.settings.outputMode).onChange(async (value) => {
+      dropdown.addOption("same-folder", "Same folder").addOption("fixed-folder", "Fixed folder").setValue(this.plugin.settings.outputMode).onChange((value) => {
         this.plugin.settings.outputMode = value;
-        await this.plugin.saveSettings();
+        void this.plugin.saveSettings();
         this.display();
       });
     });
   }
   addRendererModeSetting() {
     new import_obsidian3.Setting(this.containerEl).setName("Renderer mode").setDesc("Version 1 supports the external Python renderer.").addDropdown((dropdown) => {
-      dropdown.addOption("external", "External").addOption("native", "Native (not implemented)").setValue(this.plugin.settings.rendererMode).onChange(async (value) => {
+      dropdown.addOption("external", "External").addOption("native", "Native (not implemented)").setValue(this.plugin.settings.rendererMode).onChange((value) => {
         this.plugin.settings.rendererMode = value;
-        await this.plugin.saveSettings();
+        void this.plugin.saveSettings();
       });
     });
   }
   addTextSetting(name, value, setter, desc) {
     new import_obsidian3.Setting(this.containerEl).setName(name).setDesc(desc ?? "").addText((text) => {
-      text.setValue(value).onChange(async (nextValue) => {
-        await setter(nextValue);
-        await this.plugin.saveSettings();
+      text.setValue(value).onChange((nextValue) => {
+        setter(nextValue);
+        void this.plugin.saveSettings();
       });
     });
   }
   addToggleSetting(name, value, setter) {
     new import_obsidian3.Setting(this.containerEl).setName(name).addToggle((toggle) => {
-      toggle.setValue(value).onChange(async (nextValue) => {
-        await setter(nextValue);
-        await this.plugin.saveSettings();
+      toggle.setValue(value).onChange((nextValue) => {
+        setter(nextValue);
+        void this.plugin.saveSettings();
       });
     });
   }
@@ -348,8 +346,8 @@ var ExternalResumeRenderer = class {
 
 // src/rendering/nativeRenderer.ts
 var NativeResumeRenderer = class {
-  async render(_request) {
-    throw new Error("Native renderer is not implemented in version 1.");
+  render(_request) {
+    return Promise.reject(new Error("Native renderer is not implemented in version 1."));
   }
 };
 
@@ -363,35 +361,37 @@ var ResumePdfPlugin = class extends import_obsidian4.Plugin {
   }
   async onload() {
     await this.loadSettings();
-    this.addRibbonIcon(RIBBON_ICON, "Export resume PDF", async () => {
-      await this.runExport();
+    this.addRibbonIcon(RIBBON_ICON, "Export resume PDF", () => {
+      void this.runExport();
     });
     this.addCommand({
       id: EXPORT_COMMAND_ID,
       name: "Resume: Convert current note to PDF",
-      callback: async () => await this.runExport()
+      callback: () => {
+        void this.runExport();
+      }
     });
     this.addCommand({
       id: EXPORT_AND_OPEN_COMMAND_ID,
       name: "Resume: Convert current note to PDF and open",
-      callback: async () => await this.runExport(true)
+      callback: () => {
+        void this.runExport(true);
+      }
     });
     this.statusBarItemEl = this.addStatusBarItem();
-    this.statusBarItemEl.setText("Export Resume PDF");
+    this.statusBarItemEl.setText("Export resume PDF");
     this.statusBarItemEl.setAttribute("aria-label", "Export resume PDF");
-    this.statusBarItemEl.style.cursor = "pointer";
-    this.statusBarItemEl.addEventListener("click", async () => {
-      await this.runExport();
+    this.statusBarItemEl.addClass("resume-pdf-exporter-status");
+    this.statusBarItemEl.addEventListener("click", () => {
+      void this.runExport();
     });
     this.registerEvent(this.app.workspace.on("file-menu", (menu, file) => {
-      if (file.extension !== "md") {
+      if (!(file instanceof import_obsidian4.TFile) || file.extension !== "md") {
         return;
       }
       menu.addItem((item) => {
-        item.setTitle("Export resume PDF").setIcon(RIBBON_ICON).onClick(async () => {
-          const leaf = this.app.workspace.getMostRecentLeaf();
-          await leaf?.openFile(file);
-          await this.runExport();
+        item.setTitle("Export resume PDF").setIcon(RIBBON_ICON).onClick(() => {
+          void this.exportFileFromMenu(file);
         });
       });
     }));
@@ -411,6 +411,13 @@ var ResumePdfPlugin = class extends import_obsidian4.Plugin {
       renderer: this.createRenderer(),
       openAfterExportOverride
     });
+  }
+  async exportFileFromMenu(file) {
+    const leaf = this.app.workspace.getMostRecentLeaf();
+    if (leaf) {
+      await leaf.openFile(file);
+    }
+    await this.runExport();
   }
   createRenderer() {
     if (this.settings.rendererMode === "native") {
