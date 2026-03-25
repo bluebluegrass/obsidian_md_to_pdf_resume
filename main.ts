@@ -21,7 +21,7 @@ export default class ResumePdfPlugin extends Plugin {
 
     this.addCommand({
       id: EXPORT_COMMAND_ID,
-      name: "Resume: Convert current note to PDF",
+      name: "Resume: convert current note to PDF",
       callback: () => {
         void this.runExport();
       }
@@ -29,7 +29,7 @@ export default class ResumePdfPlugin extends Plugin {
 
     this.addCommand({
       id: EXPORT_AND_OPEN_COMMAND_ID,
-      name: "Resume: Convert current note to PDF and open",
+      name: "Resume: convert current note to PDF and open",
       callback: () => {
         void this.runExport(true);
       }
