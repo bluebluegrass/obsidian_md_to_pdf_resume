@@ -12,8 +12,6 @@ export class ResumePdfSettingTab extends PluginSettingTab {
     containerEl.empty();
     containerEl.addClass("resume-pdf-exporter-setting");
 
-    new Setting(containerEl).setName("Export").setHeading();
-
     this.addOutputModeSetting();
     this.addTextSetting("Fixed output folder", this.plugin.settings.fixedOutputFolder, (value) => {
       this.plugin.settings.fixedOutputFolder = value.trim();
@@ -53,7 +51,7 @@ export class ResumePdfSettingTab extends PluginSettingTab {
   private addRendererModeSetting(): void {
     new Setting(this.containerEl)
       .setName("Renderer mode")
-      .setDesc("Use the external Python renderer.")
+      .setDesc("Select the renderer used for PDF export.")
       .addDropdown((dropdown) => {
         dropdown
           .addOption("external", "External renderer")
