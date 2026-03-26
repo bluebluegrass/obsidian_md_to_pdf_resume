@@ -234,7 +234,7 @@ var ResumePdfSettingTab = class extends import_obsidian3.PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
     containerEl.addClass("resume-pdf-exporter-setting");
-    new import_obsidian3.Setting(containerEl).setName("Resume PDF Exporter").setHeading();
+    new import_obsidian3.Setting(containerEl).setName("Export").setHeading();
     this.addOutputModeSetting();
     this.addTextSetting("Fixed output folder", this.plugin.settings.fixedOutputFolder, (value) => {
       this.plugin.settings.fixedOutputFolder = value.trim();
@@ -263,8 +263,8 @@ var ResumePdfSettingTab = class extends import_obsidian3.PluginSettingTab {
     });
   }
   addRendererModeSetting() {
-    new import_obsidian3.Setting(this.containerEl).setName("Renderer mode").setDesc("Version 1 supports the external Python renderer.").addDropdown((dropdown) => {
-      dropdown.addOption("external", "External").addOption("native", "Native (not implemented)").setValue(this.plugin.settings.rendererMode).onChange((value) => {
+    new import_obsidian3.Setting(this.containerEl).setName("Renderer mode").setDesc("Use the external Python renderer.").addDropdown((dropdown) => {
+      dropdown.addOption("external", "External renderer").addOption("native", "Native renderer (not implemented yet)").setValue(this.plugin.settings.rendererMode).onChange((value) => {
         this.plugin.settings.rendererMode = value;
         void this.plugin.saveSettings();
       });
@@ -366,14 +366,14 @@ var ResumePdfPlugin = class extends import_obsidian4.Plugin {
     });
     this.addCommand({
       id: EXPORT_COMMAND_ID,
-      name: "Resume: Convert current note to PDF",
+      name: "Resume: convert current note to PDF",
       callback: () => {
         void this.runExport();
       }
     });
     this.addCommand({
       id: EXPORT_AND_OPEN_COMMAND_ID,
-      name: "Resume: Convert current note to PDF and open",
+      name: "Resume: convert current note to PDF and open",
       callback: () => {
         void this.runExport(true);
       }
