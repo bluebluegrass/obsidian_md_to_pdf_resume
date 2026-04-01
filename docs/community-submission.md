@@ -50,5 +50,6 @@ This checklist is based on the current official Obsidian developer documentation
 
 ## Notes Specific To This Plugin
 - The plugin depends on a local Python interpreter with `reportlab` installed.
+- The Python renderer helper is bundled into `main.js` and written into the installed plugin directory automatically at runtime.
 - The README should call out that requirement clearly so users understand setup.
 - The one-page fit behavior should stay documented because it is a key differentiator of the plugin.

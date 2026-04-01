@@ -3,14 +3,16 @@ import type { ResumeRenderer, RenderRequest, RenderResult } from "./renderer";
 import type { ResumePdfSettings } from "../settings";
 import { ensureDirectoryForFile, fileExists } from "../infrastructure/fileSystem";
 import { runProcess } from "../infrastructure/processRunner";
+import { ensureBundledRendererScript } from "./ensureBundledRendererScript";
 
 export class ExternalResumeRenderer implements ResumeRenderer {
   constructor(private readonly settings: ResumePdfSettings, private readonly pluginRoot: string) {}
 
   async render(request: RenderRequest): Promise<RenderResult> {
-    const scriptPath = path.isAbsolute(this.settings.externalScriptPath)
+    const configuredScriptPath = path.isAbsolute(this.settings.externalScriptPath)
       ? this.settings.externalScriptPath
       : path.join(this.pluginRoot, this.settings.externalScriptPath);
+    const scriptPath = await ensureBundledRendererScript(configuredScriptPath);
 
     await ensureDirectoryForFile(request.outputPath);
     await runProcess({

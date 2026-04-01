@@ -73,11 +73,11 @@ Additional recommended screenshots for later:
    - `styles.css`
 2. Create a folder named `resume-pdf-exporter` in your vault under `.obsidian/plugins/`.
 3. Copy the release assets into that folder.
-4. Copy `scripts/render_resume_pdf.py` into `.obsidian/plugins/resume-pdf-exporter/scripts/`.
-5. Enable the plugin under `Settings -> Community plugins`.
+4. Enable the plugin under `Settings -> Community plugins`.
 
 ### Python requirement
 - Configure the plugin to use a Python interpreter that already has `reportlab` installed.
+- The plugin writes its bundled renderer helper into the installed plugin folder automatically on first use, so no extra manual file copy is required.
 - On this project’s reference setup, `/opt/homebrew/bin/python3` is used.
 
 ## Sample Files
@@ -100,5 +100,5 @@ Additional publishing docs:
 - [Screenshot plan](docs/screenshots-plan.md)
 
 ## Notes
-- Version 1 uses the bundled `scripts/render_resume_pdf.py` helper.
+- Version 1 uses a bundled Python helper that is written into the installed plugin folder automatically.
 - The plugin is intentionally scoped to resume notes, not general markdown export.
