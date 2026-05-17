@@ -234,7 +234,6 @@ var ResumePdfSettingTab = class extends import_obsidian3.PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
     containerEl.addClass("resume-pdf-exporter-setting");
-    new import_obsidian3.Setting(containerEl).setName("Export").setHeading();
     this.addOutputModeSetting();
     this.addTextSetting("Fixed output folder", this.plugin.settings.fixedOutputFolder, (value) => {
       this.plugin.settings.fixedOutputFolder = value.trim();
@@ -263,7 +262,7 @@ var ResumePdfSettingTab = class extends import_obsidian3.PluginSettingTab {
     });
   }
   addRendererModeSetting() {
-    new import_obsidian3.Setting(this.containerEl).setName("Renderer mode").setDesc("Use the external Python renderer.").addDropdown((dropdown) => {
+    new import_obsidian3.Setting(this.containerEl).setName("Renderer mode").setDesc("Select the renderer used for PDF export.").addDropdown((dropdown) => {
       dropdown.addOption("external", "External renderer").addOption("native", "Native renderer (not implemented yet)").setValue(this.plugin.settings.rendererMode).onChange((value) => {
         this.plugin.settings.rendererMode = value;
         void this.plugin.saveSettings();
@@ -289,7 +288,45 @@ var ResumePdfSettingTab = class extends import_obsidian3.PluginSettingTab {
 };
 
 // src/rendering/externalRenderer.ts
+var import_node_path4 = __toESM(require("node:path"));
+
+// src/infrastructure/processRunner.ts
+var import_node_child_process = require("node:child_process");
+async function runProcess(params) {
+  const { command, args, cwd } = params;
+  return await new Promise((resolve, reject) => {
+    const child = (0, import_node_child_process.spawn)(command, args, {
+      cwd,
+      shell: false,
+      stdio: ["ignore", "pipe", "pipe"]
+    });
+    let stdout = "";
+    let stderr = "";
+    child.stdout.on("data", (chunk) => {
+      stdout += chunk.toString();
+    });
+    child.stderr.on("data", (chunk) => {
+      stderr += chunk.toString();
+    });
+    child.on("error", (err) => {
+      reject(new Error(`Failed to start process '${command}': ${err.message}`));
+    });
+    child.on("close", (code) => {
+      const exitCode = code ?? -1;
+      if (exitCode !== 0) {
+        reject(new Error(`Process exited with code ${exitCode}. ${stderr.trim() || stdout.trim()}`.trim()));
+        return;
+      }
+      resolve({ stdout, stderr, exitCode });
+    });
+  });
+}
+
+// src/rendering/ensureBundledRendererScript.ts
+var import_promises2 = __toESM(require("node:fs/promises"));
 var import_node_path3 = __toESM(require("node:path"));
+
+// src/rendering/bundledRendererScriptSource.ts
 var BUNDLED_RENDERER_SCRIPT_SOURCE = `#!/usr/bin/env python3
 import argparse
 import re
@@ -496,7 +533,7 @@ def render_pdf(input_path: Path, output_path: Path):
                 pdf.drawCentredString(page_width / 2, baseline, line)
             elif kind == 'bullet':
                 if line_idx == 0:
-                    pdf.drawString(LEFT, baseline, u'•')
+                    pdf.drawString(LEFT, baseline, u'\u2022')
                 pdf.drawString(LEFT + BULLET_INDENT, baseline, line)
             else:
                 pdf.drawString(LEFT, baseline, line)
@@ -522,6 +559,8 @@ def main():
 if __name__ == '__main__':
     main()
 `;
+
+// src/rendering/ensureBundledRendererScript.ts
 function normalizeScriptSource(value) {
   return value.replace(/\r\n/g, "\n");
 }
@@ -530,7 +569,7 @@ async function ensureBundledRendererScript(scriptPath) {
   const expectedSource = normalizeScriptSource(BUNDLED_RENDERER_SCRIPT_SOURCE);
   let currentSource = null;
   try {
-    currentSource = normalizeScriptSource(await import_promises.default.readFile(scriptPath, "utf8"));
+    currentSource = normalizeScriptSource(await import_promises2.default.readFile(scriptPath, "utf8"));
   } catch (error2) {
     const code = error2 && typeof error2 === "object" && "code" in error2 ? String(error2.code) : "";
     if (code !== "ENOENT") {
@@ -538,43 +577,11 @@ async function ensureBundledRendererScript(scriptPath) {
     }
   }
   if (currentSource !== expectedSource) {
-    await import_promises.default.writeFile(scriptPath, expectedSource, { encoding: "utf8", mode: 493 });
+    await import_promises2.default.writeFile(scriptPath, expectedSource, { encoding: "utf8", mode: 493 });
   } else {
-    await import_promises.default.chmod(scriptPath, 493);
+    await import_promises2.default.chmod(scriptPath, 493);
   }
   return import_node_path3.default.resolve(scriptPath);
-}
-
-// src/infrastructure/processRunner.ts
-var import_node_child_process = require("node:child_process");
-async function runProcess(params) {
-  const { command, args, cwd } = params;
-  return await new Promise((resolve, reject) => {
-    const child = (0, import_node_child_process.spawn)(command, args, {
-      cwd,
-      shell: false,
-      stdio: ["ignore", "pipe", "pipe"]
-    });
-    let stdout = "";
-    let stderr = "";
-    child.stdout.on("data", (chunk) => {
-      stdout += chunk.toString();
-    });
-    child.stderr.on("data", (chunk) => {
-      stderr += chunk.toString();
-    });
-    child.on("error", (err) => {
-      reject(new Error(`Failed to start process '${command}': ${err.message}`));
-    });
-    child.on("close", (code) => {
-      const exitCode = code ?? -1;
-      if (exitCode !== 0) {
-        reject(new Error(`Process exited with code ${exitCode}. ${stderr.trim() || stdout.trim()}`.trim()));
-        return;
-      }
-      resolve({ stdout, stderr, exitCode });
-    });
-  });
 }
 
 // src/rendering/externalRenderer.ts
@@ -584,7 +591,7 @@ var ExternalResumeRenderer = class {
     this.pluginRoot = pluginRoot;
   }
   async render(request) {
-    const configuredScriptPath = import_node_path3.default.isAbsolute(this.settings.externalScriptPath) ? this.settings.externalScriptPath : import_node_path3.default.join(this.pluginRoot, this.settings.externalScriptPath);
+    const configuredScriptPath = import_node_path4.default.isAbsolute(this.settings.externalScriptPath) ? this.settings.externalScriptPath : import_node_path4.default.join(this.pluginRoot, this.settings.externalScriptPath);
     const scriptPath = await ensureBundledRendererScript(configuredScriptPath);
     await ensureDirectoryForFile(request.outputPath);
     await runProcess({
@@ -607,7 +614,7 @@ var NativeResumeRenderer = class {
 };
 
 // main.ts
-var import_node_path4 = __toESM(require("node:path"));
+var import_node_path5 = __toESM(require("node:path"));
 var ResumePdfPlugin = class extends import_obsidian4.Plugin {
   constructor() {
     super(...arguments);
@@ -682,7 +689,7 @@ var ResumePdfPlugin = class extends import_obsidian4.Plugin {
     if (!(adapter instanceof import_obsidian4.FileSystemAdapter)) {
       throw new Error("Resume PDF Exporter requires the desktop filesystem adapter.");
     }
-    const pluginRoot = import_node_path4.default.join(
+    const pluginRoot = import_node_path5.default.join(
       adapter.getBasePath(),
       this.app.vault.configDir,
       "plugins",
