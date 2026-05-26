@@ -1,12 +1,10 @@
-import { FileSystemAdapter, Plugin, TFile } from "obsidian";
+import { Plugin, TFile } from "obsidian";
 import { EXPORT_AND_OPEN_COMMAND_ID, EXPORT_COMMAND_ID, RIBBON_ICON } from "./src/constants/defaults";
 import { exportResume } from "./src/application/exportResume";
 import { DEFAULT_SETTINGS, type ResumePdfSettings } from "./src/settings";
 import { ResumePdfSettingTab } from "./src/ui/settingsTab";
-import { ExternalResumeRenderer } from "./src/rendering/externalRenderer";
 import { NativeResumeRenderer } from "./src/rendering/nativeRenderer";
 import type { ResumeRenderer } from "./src/rendering/renderer";
-import path from "node:path";
 
 export default class ResumePdfPlugin extends Plugin {
   settings: ResumePdfSettings = DEFAULT_SETTINGS;
@@ -87,19 +85,6 @@ export default class ResumePdfPlugin extends Plugin {
   }
 
   private createRenderer(): ResumeRenderer {
-    if (this.settings.rendererMode === "native") {
-      return new NativeResumeRenderer();
-    }
-    const adapter = this.app.vault.adapter;
-    if (!(adapter instanceof FileSystemAdapter)) {
-      throw new Error("Resume PDF Exporter requires the desktop filesystem adapter.");
-    }
-    const pluginRoot = path.join(
-      adapter.getBasePath(),
-      this.app.vault.configDir,
-      "plugins",
-      this.manifest.id
-    );
-    return new ExternalResumeRenderer(this.settings, pluginRoot);
+    return new NativeResumeRenderer();
   }
 }

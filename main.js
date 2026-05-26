@@ -217,10 +217,7 @@ var DEFAULT_SETTINGS = {
   outputMode: "same-folder",
   fixedOutputFolder: "",
   overwriteExisting: true,
-  openAfterExport: false,
-  rendererMode: "external",
-  externalPythonPath: "python3",
-  externalScriptPath: "scripts/render_resume_pdf.py"
+  openAfterExport: false
 };
 
 // src/ui/settingsTab.ts
@@ -244,13 +241,6 @@ var ResumePdfSettingTab = class extends import_obsidian3.PluginSettingTab {
     this.addToggleSetting("Open PDF after export", this.plugin.settings.openAfterExport, (value) => {
       this.plugin.settings.openAfterExport = value;
     });
-    this.addRendererModeSetting();
-    this.addTextSetting("Python executable", this.plugin.settings.externalPythonPath, (value) => {
-      this.plugin.settings.externalPythonPath = value.trim() || "python3";
-    }, "Example: python3 or /usr/bin/python3");
-    this.addTextSetting("Renderer script path", this.plugin.settings.externalScriptPath, (value) => {
-      this.plugin.settings.externalScriptPath = value.trim();
-    }, "Relative to the plugin folder or an absolute path.");
   }
   addOutputModeSetting() {
     new import_obsidian3.Setting(this.containerEl).setName("Output mode").setDesc("Choose whether the PDF is saved next to the note or in a fixed folder.").addDropdown((dropdown) => {
@@ -258,14 +248,6 @@ var ResumePdfSettingTab = class extends import_obsidian3.PluginSettingTab {
         this.plugin.settings.outputMode = value;
         void this.plugin.saveSettings();
         this.display();
-      });
-    });
-  }
-  addRendererModeSetting() {
-    new import_obsidian3.Setting(this.containerEl).setName("Renderer mode").setDesc("Select the renderer used for PDF export.").addDropdown((dropdown) => {
-      dropdown.addOption("external", "External renderer").addOption("native", "Native renderer (not implemented yet)").setValue(this.plugin.settings.rendererMode).onChange((value) => {
-        this.plugin.settings.rendererMode = value;
-        void this.plugin.saveSettings();
       });
     });
   }
@@ -287,317 +269,289 @@ var ResumePdfSettingTab = class extends import_obsidian3.PluginSettingTab {
   }
 };
 
-// src/rendering/externalRenderer.ts
-var import_node_path4 = __toESM(require("node:path"));
-
-// src/infrastructure/processRunner.ts
-var import_node_child_process = require("node:child_process");
-async function runProcess(params) {
-  const { command, args, cwd } = params;
-  return await new Promise((resolve, reject) => {
-    const child = (0, import_node_child_process.spawn)(command, args, {
-      cwd,
-      shell: false,
-      stdio: ["ignore", "pipe", "pipe"]
-    });
-    let stdout = "";
-    let stderr = "";
-    child.stdout.on("data", (chunk) => {
-      stdout += chunk.toString();
-    });
-    child.stderr.on("data", (chunk) => {
-      stderr += chunk.toString();
-    });
-    child.on("error", (err) => {
-      reject(new Error(`Failed to start process '${command}': ${err.message}`));
-    });
-    child.on("close", (code) => {
-      const exitCode = code ?? -1;
-      if (exitCode !== 0) {
-        reject(new Error(`Process exited with code ${exitCode}. ${stderr.trim() || stdout.trim()}`.trim()));
-        return;
-      }
-      resolve({ stdout, stderr, exitCode });
-    });
-  });
-}
-
-// src/rendering/ensureBundledRendererScript.ts
-var import_promises2 = __toESM(require("node:fs/promises"));
-var import_node_path3 = __toESM(require("node:path"));
-
-// src/rendering/bundledRendererScriptSource.ts
-var BUNDLED_RENDERER_SCRIPT_SOURCE = `#!/usr/bin/env python3
-import argparse
-import re
-from pathlib import Path
-
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfbase.pdfmetrics import stringWidth
-from reportlab.pdfgen import canvas
-
-LEFT = 42
-RIGHT = 42
-TOP = 34
-BOTTOM = 30
-BULLET_INDENT = 11
-SECTION_BREAK_LINES = 1.0
-BASE_SIZE = {
-    'name': 17.2,
-    'contact': 10.4,
-    'section': 10.8,
-    'role': 10.0,
-    'text': 9.0,
-    'bullet': 9.0,
-}
-BASE_LEAD = {
-    'name': 19.2,
-    'contact': 12.0,
-    'section': 12.0,
-    'role': 11.4,
-    'text': 10.3,
-    'bullet': 10.3,
-}
-FONTS = {
-    'name': 'Times-Bold',
-    'contact': 'Times-Roman',
-    'section': 'Times-Bold',
-    'role': 'Times-Bold',
-    'text': 'Times-Roman',
-    'bullet': 'Times-Roman',
-}
-SPACE = {
-    'header': 9.5,
-    'section': 2.6,
-    'role': 2.2,
-    'text': 1.3,
-    'bullet': 1.0,
-}
-
-
-def normalize_lines(raw_text: str):
-    lines = []
-    for line in raw_text.splitlines():
-        line = re.sub(r'^\\s*-\\s*###\\s+', '### ', line)
-        line = re.sub(r'\\*\\*(.*?)\\*\\*', r'\\1', line)
-        line = re.sub(r'__(.*?)__', r'\\1', line)
-        lines.append(line.rstrip())
-    return lines
-
-
-def parse_resume(raw_text: str):
-    lines = normalize_lines(raw_text)
-    name = ''
-    contact = ''
-    items = []
-    found_name = False
-    awaiting_contact = False
-
-    for line in lines:
-        stripped = line.strip()
-        if not stripped:
-            continue
-        if stripped.startswith('# '):
-            name = stripped[2:].strip()
-            found_name = True
-            awaiting_contact = True
-            continue
-        if awaiting_contact:
-            if stripped.startswith('## ') or stripped.startswith('### ') or stripped.startswith('- '):
-                raise ValueError('Resume is missing a contact line.')
-            contact = stripped
-            awaiting_contact = False
-            continue
-        if stripped.startswith('## '):
-            items.append(('section', stripped[3:].strip()))
-        elif stripped.startswith('### '):
-            items.append(('role', stripped[4:].strip()))
-        elif stripped.startswith('- '):
-            items.append(('bullet', stripped[2:].strip()))
-        else:
-            items.append(('text', stripped))
-
-    if not name:
-        raise ValueError("Resume is missing a '# Name' heading.")
-    if not contact:
-        raise ValueError('Resume is missing a contact line.')
-    if not items:
-        raise ValueError('Resume is missing body content.')
-
-    return name, contact, items
-
-
-def wrap_text(text, font, size, max_width):
-    words = text.split()
-    if not words:
-        return ['']
-    wrapped = []
-    current = words[0]
-    for word in words[1:]:
-        candidate = f'{current} {word}'
-        if stringWidth(candidate, font, size) <= max_width:
-            current = candidate
-        else:
-            wrapped.append(current)
-            current = word
-    wrapped.append(current)
-    return wrapped
-
-
-def build_layout(name, contact, items, scale, usable_width):
-    sizes = {k: v * scale for k, v in BASE_SIZE.items()}
-    leads = {k: v * scale for k, v in BASE_LEAD.items()}
-    section_break_gap = leads['text'] * SECTION_BREAK_LINES
-    elements = [
-        ('name', [name], sizes['name'], leads['name'], 0),
-        ('contact', [contact], sizes['contact'], leads['contact'], 0),
-    ]
-    for idx, (kind, text) in enumerate(items):
-        max_width = usable_width - BULLET_INDENT if kind == 'bullet' else usable_width
-        lines = wrap_text(text, FONTS[kind], sizes[kind], max_width)
-        extra_before = section_break_gap if kind == 'section' and idx > 0 else 0
-        elements.append((kind, lines, sizes[kind], leads[kind], extra_before))
-    return elements, sizes, leads
-
-
-def measure_height(layout, page_height, scale):
-    y = page_height - TOP
-    y -= layout[0][3] * len(layout[0][1])
-    y -= SPACE['header'] * scale
-    y -= layout[1][3] * len(layout[1][1])
-    y -= SPACE['header'] * scale
-    for kind, lines, _size, lead, extra_before in layout[2:]:
-        y -= extra_before
-        y -= lead * len(lines)
-        y -= SPACE[kind] * scale
-    return (page_height - TOP) - y
-
-
-def choose_scale(name, contact, items, page_width, page_height):
-    usable_width = page_width - LEFT - RIGHT
-    available_height = page_height - TOP - BOTTOM
-
-    def used(scale):
-        layout, _, _ = build_layout(name, contact, items, scale, usable_width)
-        return measure_height(layout, page_height, scale)
-
-    lo, hi = 0.70, 1.50
-    best = lo
-    for _ in range(28):
-        mid = (lo + hi) / 2
-        if used(mid) <= available_height:
-            best = mid
-            lo = mid
-        else:
-            hi = mid
-
-    ratio = used(best) / available_height
-    if ratio < 0.94:
-        lo2, hi2 = best, min(best * 1.08, 1.50)
-        candidate = best
-        for _ in range(20):
-            mid = (lo2 + hi2) / 2
-            current_used = used(mid)
-            current_ratio = current_used / available_height
-            if current_used <= available_height and current_ratio <= 0.97:
-                candidate = mid
-                lo2 = mid
-            else:
-                hi2 = mid
-        best = candidate
-
-    if used(best) > available_height:
-        raise ValueError('Resume content does not fit on one page.')
-
-    return best
-
-
-def render_pdf(input_path: Path, output_path: Path):
-    name, contact, items = parse_resume(input_path.read_text(encoding='utf-8'))
-    page_width, page_height = A4
-    usable_width = page_width - LEFT - RIGHT
-    scale = choose_scale(name, contact, items, page_width, page_height)
-    layout, _, _ = build_layout(name, contact, items, scale, usable_width)
-
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    pdf = canvas.Canvas(str(output_path), pagesize=A4)
-    y = page_height - TOP
-
-    for idx, (kind, lines, size, lead, extra_before) in enumerate(layout):
-        pdf.setFont(FONTS[kind], size)
-        if idx >= 2:
-            y -= extra_before
-        for line_idx, line in enumerate(lines):
-            baseline = y - lead + 2
-            if kind in ('name', 'contact'):
-                pdf.drawCentredString(page_width / 2, baseline, line)
-            elif kind == 'bullet':
-                if line_idx == 0:
-                    pdf.drawString(LEFT, baseline, u'\u2022')
-                pdf.drawString(LEFT + BULLET_INDENT, baseline, line)
-            else:
-                pdf.drawString(LEFT, baseline, line)
-            y -= lead
-        y -= SPACE['header'] * scale if kind in ('name', 'contact') else SPACE[kind] * scale
-
-    if y < BOTTOM:
-        raise ValueError('Resume content overflowed the page during render.')
-
-    pdf.save()
-
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--input', required=True)
-    parser.add_argument('--output', required=True)
-    args = parser.parse_args()
-
-    render_pdf(Path(args.input), Path(args.output))
-    print(args.output)
-
-
-if __name__ == '__main__':
-    main()
-`;
-
-// src/rendering/ensureBundledRendererScript.ts
-function normalizeScriptSource(value) {
-  return value.replace(/\r\n/g, "\n");
-}
-async function ensureBundledRendererScript(scriptPath) {
-  await ensureDirectoryForFile(scriptPath);
-  const expectedSource = normalizeScriptSource(BUNDLED_RENDERER_SCRIPT_SOURCE);
-  let currentSource = null;
-  try {
-    currentSource = normalizeScriptSource(await import_promises2.default.readFile(scriptPath, "utf8"));
-  } catch (error2) {
-    const code = error2 && typeof error2 === "object" && "code" in error2 ? String(error2.code) : "";
-    if (code !== "ENOENT") {
-      throw error2;
+// src/rendering/layout.ts
+var PAGE_WIDTH = 595.2756;
+var PAGE_HEIGHT = 841.8898;
+var LEFT = 42;
+var RIGHT = 42;
+var TOP = 34;
+var BOTTOM = 30;
+var BULLET_INDENT = 11;
+var SECTION_BREAK_LINES = 1;
+var BASE_SIZE = {
+  name: 17.2,
+  contact: 10.4,
+  section: 10.8,
+  role: 10,
+  text: 9,
+  bullet: 9
+};
+var BASE_LEAD = {
+  name: 19.2,
+  contact: 12,
+  section: 12,
+  role: 11.4,
+  text: 10.3,
+  bullet: 10.3
+};
+var SPACE = {
+  header: 9.5,
+  section: 2.6,
+  role: 2.2,
+  text: 1.3,
+  bullet: 1
+};
+var FONT_BY_KIND = {
+  name: "Times-Bold",
+  contact: "Times-Roman",
+  section: "Times-Bold",
+  role: "Times-Bold",
+  text: "Times-Roman",
+  bullet: "Times-Roman"
+};
+function measureText(text, size) {
+  let units = 0;
+  for (const char of text) {
+    if (char === " ") {
+      units += 0.25;
+    } else if ("ilI.,:;!'|".includes(char)) {
+      units += 0.28;
+    } else if ("frtJ()[]{}-".includes(char)) {
+      units += 0.35;
+    } else if ("mwMW@%&QG".includes(char)) {
+      units += 0.92;
+    } else if ("ABCDEFGHKNOPRSTUVXYZ23456789".includes(char)) {
+      units += 0.62;
+    } else if ("abcdeghknopqsuvxyz013".includes(char)) {
+      units += 0.5;
+    } else {
+      units += 0.45;
     }
   }
-  if (currentSource !== expectedSource) {
-    await import_promises2.default.writeFile(scriptPath, expectedSource, { encoding: "utf8", mode: 493 });
-  } else {
-    await import_promises2.default.chmod(scriptPath, 493);
+  return units * size;
+}
+function wrapText(text, size, maxWidth) {
+  const words = text.split(/\s+/).filter(Boolean);
+  if (words.length === 0) {
+    return [""];
   }
-  return import_node_path3.default.resolve(scriptPath);
+  const wrapped = [];
+  let current = words[0];
+  for (const word of words.slice(1)) {
+    const candidate = `${current} ${word}`;
+    if (measureText(candidate, size) <= maxWidth) {
+      current = candidate;
+      continue;
+    }
+    wrapped.push(current);
+    current = word;
+  }
+  wrapped.push(current);
+  return wrapped;
+}
+function buildLayout(document, scale) {
+  const usableWidth = PAGE_WIDTH - LEFT - RIGHT;
+  const sizes = Object.fromEntries(
+    Object.entries(BASE_SIZE).map(([key, value]) => [key, value * scale])
+  );
+  const leads = Object.fromEntries(
+    Object.entries(BASE_LEAD).map(([key, value]) => [key, value * scale])
+  );
+  const sectionBreakGap = leads.text * SECTION_BREAK_LINES;
+  const entries = [
+    { kind: "name", lines: [document.name], size: sizes.name, lead: leads.name, extraBefore: 0 },
+    { kind: "contact", lines: [document.contact], size: sizes.contact, lead: leads.contact, extraBefore: 0 }
+  ];
+  document.items.forEach((item, index) => {
+    const maxWidth = item.kind === "bullet" ? usableWidth - BULLET_INDENT : usableWidth;
+    entries.push({
+      kind: item.kind,
+      lines: wrapText(item.text, sizes[item.kind], maxWidth),
+      size: sizes[item.kind],
+      lead: leads[item.kind],
+      extraBefore: item.kind === "section" && index > 0 ? sectionBreakGap : 0
+    });
+  });
+  return entries;
+}
+function measureHeight(entries, scale) {
+  let y = PAGE_HEIGHT - TOP;
+  y -= entries[0].lead * entries[0].lines.length;
+  y -= SPACE.header * scale;
+  y -= entries[1].lead * entries[1].lines.length;
+  y -= SPACE.header * scale;
+  for (const entry of entries.slice(2)) {
+    y -= entry.extraBefore;
+    y -= entry.lead * entry.lines.length;
+    y -= SPACE[entry.kind] * scale;
+  }
+  return PAGE_HEIGHT - TOP - y;
+}
+function chooseScale(document) {
+  const availableHeight = PAGE_HEIGHT - TOP - BOTTOM;
+  const used = (scale) => measureHeight(buildLayout(document, scale), scale);
+  let lo = 0.7;
+  let hi = 1.5;
+  let best = lo;
+  for (let i = 0; i < 28; i += 1) {
+    const mid = (lo + hi) / 2;
+    if (used(mid) <= availableHeight) {
+      best = mid;
+      lo = mid;
+    } else {
+      hi = mid;
+    }
+  }
+  const ratio = used(best) / availableHeight;
+  if (ratio < 0.94) {
+    let lo2 = best;
+    let hi2 = Math.min(best * 1.08, 1.5);
+    let candidate = best;
+    for (let i = 0; i < 20; i += 1) {
+      const mid = (lo2 + hi2) / 2;
+      const currentUsed = used(mid);
+      const currentRatio = currentUsed / availableHeight;
+      if (currentUsed <= availableHeight && currentRatio <= 0.97) {
+        candidate = mid;
+        lo2 = mid;
+      } else {
+        hi2 = mid;
+      }
+    }
+    best = candidate;
+  }
+  if (used(best) > availableHeight) {
+    throw new Error("Resume content does not fit on one page.");
+  }
+  return best;
+}
+function itemText(entry, pageY, lineIndex) {
+  const baseline = pageY - entry.lead + 2;
+  const line = entry.lines[lineIndex];
+  if (entry.kind === "name" || entry.kind === "contact") {
+    return {
+      text: line,
+      x: (PAGE_WIDTH - measureText(line, entry.size)) / 2,
+      y: baseline,
+      font: FONT_BY_KIND[entry.kind],
+      size: entry.size
+    };
+  }
+  if (entry.kind === "bullet") {
+    return {
+      text: lineIndex === 0 ? `\u2022 ${line}` : `  ${line}`,
+      x: LEFT,
+      y: baseline,
+      font: FONT_BY_KIND[entry.kind],
+      size: entry.size
+    };
+  }
+  return {
+    text: line,
+    x: LEFT,
+    y: baseline,
+    font: FONT_BY_KIND[entry.kind],
+    size: entry.size
+  };
+}
+function createRenderLines(document) {
+  const scale = chooseScale(document);
+  const entries = buildLayout(document, scale);
+  const lines = [];
+  let y = PAGE_HEIGHT - TOP;
+  entries.forEach((entry, index) => {
+    if (index >= 2) {
+      y -= entry.extraBefore;
+    }
+    entry.lines.forEach((_, lineIndex) => {
+      lines.push(itemText(entry, y, lineIndex));
+      y -= entry.lead;
+    });
+    y -= (index < 2 ? SPACE.header : SPACE[entry.kind]) * scale;
+  });
+  if (y < BOTTOM) {
+    throw new Error("Resume content overflowed the page during render.");
+  }
+  return lines;
 }
 
-// src/rendering/externalRenderer.ts
-var ExternalResumeRenderer = class {
-  constructor(settings, pluginRoot) {
-    this.settings = settings;
-    this.pluginRoot = pluginRoot;
-  }
+// src/rendering/pdfWriter.ts
+var import_promises2 = __toESM(require("node:fs/promises"));
+function pdfNumber(value) {
+  return value.toFixed(3).replace(/\.?0+$/, "");
+}
+function escapePdfText(value) {
+  return value.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+}
+function buildContentStream(lines) {
+  return lines.map((line) => {
+    const fontId = line.font === "Times-Bold" ? "F2" : "F1";
+    return [
+      "BT",
+      `/${fontId} ${pdfNumber(line.size)} Tf`,
+      `1 0 0 1 ${pdfNumber(line.x)} ${pdfNumber(line.y)} Tm`,
+      `(${escapePdfText(line.text)}) Tj`,
+      "ET"
+    ].join("\n");
+  }).join("\n");
+}
+async function writePdf(params) {
+  const { outputPath, pageWidth, pageHeight, lines } = params;
+  const stream = buildContentStream(lines);
+  const objects = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+    `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pdfNumber(pageWidth)} ${pdfNumber(pageHeight)}] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>`,
+    `<< /Length ${Buffer.byteLength(stream, "utf8")} >>
+stream
+${stream}
+endstream`,
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman >>",
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>"
+  ];
+  const parts = ["%PDF-1.4\n"];
+  const offsets = [0];
+  let cursor = Buffer.byteLength(parts[0], "utf8");
+  objects.forEach((object, index) => {
+    offsets.push(cursor);
+    const chunk = `${index + 1} 0 obj
+${object}
+endobj
+`;
+    parts.push(chunk);
+    cursor += Buffer.byteLength(chunk, "utf8");
+  });
+  const xrefOffset = cursor;
+  const xref = [
+    `xref
+0 ${objects.length + 1}`,
+    "0000000000 65535 f "
+  ];
+  offsets.slice(1).forEach((offset) => {
+    xref.push(`${String(offset).padStart(10, "0")} 00000 n `);
+  });
+  const trailer = [
+    xref.join("\n"),
+    `trailer
+<< /Size ${objects.length + 1} /Root 1 0 R >>`,
+    `startxref
+${xrefOffset}`,
+    "%%EOF\n"
+  ].join("\n");
+  parts.push(trailer);
+  await import_promises2.default.writeFile(outputPath, parts.join(""), "utf8");
+}
+
+// src/rendering/nativeRenderer.ts
+var NativeResumeRenderer = class {
   async render(request) {
-    const configuredScriptPath = import_node_path4.default.isAbsolute(this.settings.externalScriptPath) ? this.settings.externalScriptPath : import_node_path4.default.join(this.pluginRoot, this.settings.externalScriptPath);
-    const scriptPath = await ensureBundledRendererScript(configuredScriptPath);
     await ensureDirectoryForFile(request.outputPath);
-    await runProcess({
-      command: this.settings.externalPythonPath,
-      args: [scriptPath, "--input", request.sourcePath, "--output", request.outputPath],
-      cwd: this.pluginRoot
+    const lines = createRenderLines(request.document);
+    await writePdf({
+      outputPath: request.outputPath,
+      pageWidth: PAGE_WIDTH,
+      pageHeight: PAGE_HEIGHT,
+      lines
     });
     if (!await fileExists(request.outputPath)) {
       throw new Error(`Renderer did not create output file: ${request.outputPath}`);
@@ -606,15 +560,7 @@ var ExternalResumeRenderer = class {
   }
 };
 
-// src/rendering/nativeRenderer.ts
-var NativeResumeRenderer = class {
-  render(_request) {
-    return Promise.reject(new Error("Native renderer is not implemented in version 1."));
-  }
-};
-
 // main.ts
-var import_node_path5 = __toESM(require("node:path"));
 var ResumePdfPlugin = class extends import_obsidian4.Plugin {
   constructor() {
     super(...arguments);
@@ -682,19 +628,6 @@ var ResumePdfPlugin = class extends import_obsidian4.Plugin {
     await this.runExport();
   }
   createRenderer() {
-    if (this.settings.rendererMode === "native") {
-      return new NativeResumeRenderer();
-    }
-    const adapter = this.app.vault.adapter;
-    if (!(adapter instanceof import_obsidian4.FileSystemAdapter)) {
-      throw new Error("Resume PDF Exporter requires the desktop filesystem adapter.");
-    }
-    const pluginRoot = import_node_path5.default.join(
-      adapter.getBasePath(),
-      this.app.vault.configDir,
-      "plugins",
-      this.manifest.id
-    );
-    return new ExternalResumeRenderer(this.settings, pluginRoot);
+    return new NativeResumeRenderer();
   }
 };

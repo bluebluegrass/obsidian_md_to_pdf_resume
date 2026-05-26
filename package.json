@@ -1,7 +1,7 @@
 {
   "name": "obsidian-resume-pdf",
   "version": "0.1.0",
-  "description": "Obsidian plugin to export structured resume notes to one-page PDF via an external Python renderer.",
+  "description": "Obsidian plugin to export structured resume notes to one-page PDF with a bundled native renderer.",
   "main": "main.js",
   "scripts": {
     "build": "node esbuild.config.mjs production",

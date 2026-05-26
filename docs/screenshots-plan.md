@@ -21,13 +21,12 @@ Use these screenshots in the README before broader distribution and community su
 
 **What to show**
 - Plugin settings panel
-- Python executable path
 - output mode
 - overwrite toggle
 - open-after-export toggle
 
 **Why it matters**
-- Makes the Python dependency understandable immediately
+- Makes the export workflow understandable immediately
 
 ## Screenshot 3: Export Result
 

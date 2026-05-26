@@ -4,24 +4,21 @@ This is the recommended next release before community submission if you want a s
 
 ## Goals
 
-- Reduce setup friction for first-time users
+- Polish the built-in renderer experience
 - Improve plugin discoverability in the UI
 - Make installation and troubleshooting clearer
 
 ## Recommended Changes
 
-### 1. Add a built-in settings hint for Python setup
-- Detect when `reportlab` is missing and show a targeted error message:
-  - explain that the configured Python interpreter does not have `reportlab`
-  - suggest the exact settings field to update
-- This improves the first-run experience significantly.
+### 1. Add a built-in export preview command
+- Add a simple preview or sample-export command for faster validation
+- This improves confidence before sharing the generated PDF.
 
-### 2. Add a settings button to validate renderer configuration
-- Add a `Test renderer` action in settings
+### 2. Add a settings button to validate export behavior
+- Add a `Test export` action in settings
 - It should verify:
-  - Python executable exists
-  - renderer script exists
-  - `reportlab` is importable
+  - the current note matches the expected resume structure
+  - the output location is writable
 - This avoids trial-and-error through failed export attempts.
 
 ### 3. Add a clearer empty-state/help message in README
@@ -51,5 +48,5 @@ This is the recommended next release before community submission if you want a s
 - Improved renderer fitting reliability for dense one-page resumes
 
 ### Recommended setup
-- Configure the plugin to use a Python interpreter with `reportlab` installed
+- Use a clean one-page resume note with the documented heading structure
 ```

@@ -56,7 +56,7 @@ https://github.com/bluebluegrass/obsidian_md_to_pdf_resume
 ## Notes
 
 - Desktop only
-- Requires a local Python interpreter with `reportlab` installed
+- No external runtime required
 - Supports export from the command palette, file menu, and status bar
 ```
 

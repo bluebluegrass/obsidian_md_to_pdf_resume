@@ -13,7 +13,6 @@ Instead of relying on generic markdown-to-PDF output, the plugin uses a resume-s
 - Resume-specific markdown parsing and validation
 - Same-folder or fixed-folder PDF output
 - Optional open-after-export behavior
-- External renderer path configuration
 
 ## Why This Plugin Exists
 - Resume notes often need more control than general markdown export.
@@ -28,7 +27,7 @@ Export a resume PDF directly from the Obsidian file menu.
 ![Export resume PDF from the Obsidian file menu](docs/images/file-menu-export.png)
 
 ### Plugin settings
-Configure the Python executable, output mode, overwrite behavior, and renderer settings.
+Configure the output mode, overwrite behavior, and open-after-export setting.
 
 ![Resume PDF Exporter plugin settings](docs/images/plugin-settings.png)
 
@@ -43,8 +42,6 @@ Additional recommended screenshots for later:
 
 ## Requirements
 - Obsidian Desktop
-- Python 3
-- `reportlab` installed in the selected Python environment
 
 ## Resume Format
 - `# NAME`
@@ -75,11 +72,6 @@ Additional recommended screenshots for later:
 3. Copy the release assets into that folder.
 4. Enable the plugin under `Settings -> Community plugins`.
 
-### Python requirement
-- Configure the plugin to use a Python interpreter that already has `reportlab` installed.
-- The plugin writes its bundled renderer helper into the installed plugin folder automatically on first use, so no extra manual file copy is required.
-- On this project’s reference setup, `/opt/homebrew/bin/python3` is used.
-
 ## Sample Files
 - [Sample Resume Markdown](docs/images/Sample%20Resume.md)
 - [Sample Resume PDF](docs/images/Sample%20Resume.pdf)
@@ -100,5 +92,4 @@ Additional publishing docs:
 - [Screenshot plan](docs/screenshots-plan.md)
 
 ## Notes
-- Version 1 uses a bundled Python helper that is written into the installed plugin folder automatically.
 - The plugin is intentionally scoped to resume notes, not general markdown export.
