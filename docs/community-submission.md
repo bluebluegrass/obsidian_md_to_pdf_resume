@@ -1,7 +1,7 @@
 # Community Submission Checklist
 
 This checklist is based on the current official Obsidian developer documentation for submitting a community plugin:
-- [Submit your plugin](https://docs.obsidian.md/Plugins/Releasing/Submit%20your%20plugin)
+- [Submit your plugin](https://docs.obsidian.md/plugins/releasing/submit-plugin)
 - [obsidianmd/obsidian-releases](https://github.com/obsidianmd/obsidian-releases)
 
 ## Before Submission
@@ -14,13 +14,14 @@ This checklist is based on the current official Obsidian developer documentation
 - Make sure the repository is public and contains the source code.
 
 ## Release Checklist
-1. Update `manifest.json` version using semantic versioning.
-2. Build the plugin.
-3. Create a GitHub release with a tag that exactly matches the manifest version.
-4. Upload these release assets:
+1. Update `manifest.json` and `versions.json` using semantic versioning.
+2. Run `npm install`, `npm run build`, `npm test`, and `npm run check-release`.
+3. Commit the release, push it, and create a Git tag that exactly matches the manifest version. For example, if the manifest says `0.2.0`, create the tag `0.2.0`.
+4. Push the tag. The release workflow creates a GitHub release with these assets:
+   - `resume-pdf-exporter.zip` for manual installation
    - `main.js`
    - `manifest.json`
-   - `styles.css` (optional, but included for this plugin)
+   - `styles.css`
 
 ## Community Plugin Submission
 1. Open `community-plugins.json` in `obsidianmd/obsidian-releases`.
@@ -49,5 +50,5 @@ This checklist is based on the current official Obsidian developer documentation
 - Test installation from the GitHub release in a clean vault
 
 ## Notes Specific To This Plugin
-- The plugin ships with a bundled native PDF renderer and does not require external runtimes.
+- The plugin is self-contained. Users do not need Python or any other local dependency.
 - The one-page fit behavior should stay documented because it is a key differentiator of the plugin.

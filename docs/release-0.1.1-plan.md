@@ -1,52 +1,13 @@
-# Suggested `0.1.1` Follow-Up Plan
+# `0.2.0` Release Notes
 
-This is the recommended next release before community submission if you want a slightly stronger public version.
+## Improvements
 
-## Goals
+- PDF rendering is now built into the plugin. Users no longer need to install Python or `reportlab`.
+- Added a release workflow that builds and tests the plugin, then publishes individual Obsidian assets and an easy-install ZIP when a matching version tag is pushed.
+- Rewrote the README for people who use Obsidian but do not write code.
 
-- Polish the built-in renderer experience
-- Improve plugin discoverability in the UI
-- Make installation and troubleshooting clearer
+## Before publishing
 
-## Recommended Changes
-
-### 1. Add a built-in export preview command
-- Add a simple preview or sample-export command for faster validation
-- This improves confidence before sharing the generated PDF.
-
-### 2. Add a settings button to validate export behavior
-- Add a `Test export` action in settings
-- It should verify:
-  - the current note matches the expected resume structure
-  - the output location is writable
-- This avoids trial-and-error through failed export attempts.
-
-### 3. Add a clearer empty-state/help message in README
-- Include one example resume markdown note
-- Include one screenshot of the settings panel
-- Include one screenshot of a successful export flow
-
-### 4. Improve file-menu workflow
-- If possible, export the clicked markdown file directly without relying on opening it first
-- Current behavior is acceptable, but direct export from the context menu is cleaner.
-
-### 5. Improve release polish
-- Update screenshots
-- Confirm release notes
-- Confirm install steps in a clean vault
-
-## Suggested Version Bump
-
-- `0.1.1`
-
-## Suggested Release Note
-
-```markdown
-### Improvements
-- Added clearer public documentation and submission guidance
-- Improved one-click export visibility with status bar and file menu access
-- Improved renderer fitting reliability for dense one-page resumes
-
-### Recommended setup
-- Use a clean one-page resume note with the documented heading structure
-```
+- Verify an export in a clean desktop vault.
+- Push the `0.2.0` tag after the release commit is on GitHub.
+- Use the generated GitHub Release URL in any public post or tutorial.

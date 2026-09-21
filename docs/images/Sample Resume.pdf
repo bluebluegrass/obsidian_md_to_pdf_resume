@@ -1,80 +1,180 @@
-%PDF-1.3
-%“Œ‹ž ReportLab Generated PDF document http://www.reportlab.com
+%PDF-1.4
 1 0 obj
-<<
-/F1 2 0 R /F2 3 0 R /F3 4 0 R
->>
+<< /Type /Catalog /Pages 2 0 R >>
 endobj
 2 0 obj
-<<
-/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
->>
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
 endobj
 3 0 obj
-<<
-/BaseFont /Times-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
->>
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.276 841.89] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
 endobj
 4 0 obj
-<<
-/BaseFont /Times-Roman /Encoding /WinAnsiEncoding /Name /F3 /Subtype /Type1 /Type /Font
->>
+<< /Length 2856 >>
+stream
+BT
+/F2 25.8 Tf
+1 0 0 1 190.955 781.09 Tm
+(CANDIDATE NAME) Tj
+ET
+BT
+/F1 15.6 Tf
+1 0 0 1 84.074 748.84 Tm
+(City, Country | email@example.com | linkedin.com/in/example) Tj
+ET
+BT
+/F2 16.2 Tf
+1 0 0 1 42 716.59 Tm
+(PROFESSIONAL SUMMARY) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 697.24 Tm
+(Experienced Data Engineer with a strong background in building scalable data pipelines,) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 681.79 Tm
+(analytics-ready datasets, and reliable reporting systems. Skilled in SQL, Python, cloud) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 666.34 Tm
+(data platforms, and workflow orchestration, with a track record of improving data) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 650.89 Tm
+(quality, reducing latency, and supporting business decision-making.) Tj
+ET
+BT
+/F2 16.2 Tf
+1 0 0 1 42 615.49 Tm
+(CORE SKILLS) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 596.14 Tm
+(SQL, Python, Data Modeling, ELT / ETL Pipelines, BigQuery, Airflow, AWS, Docker,) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 580.69 Tm
+(Tableau, Cloud Data Platforms) Tj
+ET
+BT
+/F2 16.2 Tf
+1 0 0 1 42 545.29 Tm
+(PROFESSIONAL EXPERIENCE) Tj
+ET
+BT
+/F2 15 Tf
+1 0 0 1 42 524.29 Tm
+(Senior Data Engineer | Technology Company | 2023 - Present) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 505.54 Tm
+(• Designed and maintained scalable data pipelines for reporting and analytics.) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 488.59 Tm
+(• Built reliable data models to integrate information from multiple source systems.) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 471.64 Tm
+(• Implemented data validation and monitoring checks to improve trust in downstream) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 456.19 Tm
+(  datasets.) Tj
+ET
+BT
+/F2 15 Tf
+1 0 0 1 42 437.59 Tm
+(Data Engineer | Digital Products Company | 2019 - 2023) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 418.84 Tm
+(• Developed data pipelines supporting large-scale operational and product workflows.) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 401.89 Tm
+(• Improved data freshness and reliability for internal reporting and business metrics.) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 384.94 Tm
+(• Partnered with analysts, engineers, and stakeholders to deliver analytics-ready) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 369.49 Tm
+(  datasets.) Tj
+ET
+BT
+/F2 15 Tf
+1 0 0 1 42 350.89 Tm
+(Data Analyst / Consultant | Advisory Firm | 2016 - 2019) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 332.14 Tm
+(• Analyzed operational datasets to identify trends, risks, and improvement) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 316.69 Tm
+(  opportunities.) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 299.74 Tm
+(• Built dashboards and reports to support management decision-making.) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 282.79 Tm
+(• Automated data preparation and validation workflows to reduce manual effort.) Tj
+ET
+BT
+/F2 16.2 Tf
+1 0 0 1 42 247.84 Tm
+(EDUCATION) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 228.49 Tm
+(• M.S. | University Name | 2016) Tj
+ET
+BT
+/F1 13.5 Tf
+1 0 0 1 42 211.54 Tm
+(• B.A. | University Name | 2014) Tj
+ET
+endstream
 endobj
 5 0 obj
-<<
-/Contents 9 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 8 0 R /Resources <<
-/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
->> /Rotate 0 /Trans <<
-
->> 
-  /Type /Page
->>
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman /Encoding /WinAnsiEncoding >>
 endobj
 6 0 obj
-<<
-/PageMode /UseNone /Pages 8 0 R /Type /Catalog
->>
-endobj
-7 0 obj
-<<
-/Author (anonymous) /CreationDate (D:20260324105436+01'00') /Creator (ReportLab PDF Library - www.reportlab.com) /Keywords () /ModDate (D:20260324105436+01'00') /Producer (ReportLab PDF Library - www.reportlab.com) 
-  /Subject (unspecified) /Title (untitled) /Trapped /False
->>
-endobj
-8 0 obj
-<<
-/Count 1 /Kids [ 5 0 R ] /Type /Pages
->>
-endobj
-9 0 obj
-<<
-/Filter [ /ASCII85Decode /FlateDecode ] /Length 1481
->>
-stream
-Gat=+?$#9h&:M=.@NX>7;6]R,D^BtY0I7#aOD-f*(W@/_@S9[`PKTNoj1CIk4q^DcLC&V#p$1nkfs?P@?2Ss84"UGMk&>b3J`jpu!FA"mQqq*Hs5NJDi.iS_:O6<pO7nXI3f=eE,jG%9L_GhkP<Qu%nC-d_@5o;<js,*fglHo=q;3n+AXBb/?:Z9L>XDp"A(#gu`8)!a+<a=[8]f5c"1PQM7W%)hY_)HD=8%UhS",U?(3hLq@a-Y\m,^)@fCdVelhfU/UaiiLK&G\cJIaJiKM=JUVoQEsCc6`i(ee?2I"+A*qX[*P4VG?%0):?o;*QCV;pX[^L+1D9ataf36X_7+>VN&5NLLYZcpgU3KGU)[QO:p]J.$TNH&`%\6)QQ;00+[/^:W>CL;bt)3JM[d3:9St'LW,L[t^gW8hlcO>nYD@mJt4K']sGH(#)8jgi?V9=J6&Fei_9H__V*Ml+hCV<`4#^c"3<R4Qd;E&a;17DfTS.;AJkfDc3\R\U4LYdM9[JWSoaPblqFOCP7mDQ%<0?0/cG:>%"N2InH.kGpnuD.Gd7L+mbAf@0%Mos4[m3/iQM00;Z*^C<0N"2<)+qkSbP)2F<9tlbT_W*hPnUqe\H`bZa3Xlpo!0#WuSR$0Y]-<WpSUN$ao(hk.]+-OdNDbHE3j=RL\ib;K:oI>745FNr<\iIjdh6qm]'Ws`*?,J*hslV<qOCdUu8KZ$+.B;7\gUSmYGiV%nR@,?d>jE+!YfVb5o_52J0@6\/FdZop)>].qeM@C<O;Z*]TK.E<=VO9,T2Q.RXYh>\a]Jr)LC=kV.*&>d*!h7?t&8b,Yr56]64Ut$V6#52@G5_>)U)0I4P%8KRT;"N,]Kn&'H`qB*$S+LP7\W*a[_se1preQ4oeS-5qK,TsL8->QQDI4,c<K!fO$++]7/0X?fM7,%pR"sH"g@,3=U!4?JJ?m1A_BL29%R'3c>shK;5oQJ^J)?JF=Kb<o;dVuYmk-$ae#f#ch&4Li]ZVrKfnEhDJ5')Q"YS8+3E4%UR\HdgJI2V%,]C14cCAd=-h$(6gS-d#QC/j[:E?>h$c!Enp7CR;ST3rfF<LWZKQU]QiA'&@H=rPi>VOoD.)JF^j[VN4(_at=a_e.qR@,]USD3d[Htq?&s3)]bTB8KWA9(a"K[BU[01>:3ige/O'6DaR]U+li>nt74#C8@9BXS's&ZA:__LW@3iJ_08@k'QA+ro1:nNC,Q"u53\N?sO9!=B+X4M:-=qG')@RlOjgNOq1:l%j1Y3e%;$,5&$h_UB<LPkD?9kA/Jek,@ZX+M%EK<oaUN[O2:]^.&PZJgc-eVg4QCXd+83;dpViEQt:=[E"iA'H<-0d=2fmDI"2BdA^jSN@rhWqO/R@)KVU[l([**O@'M5nDTL)pkrQN;54-_m):S&"dbFF$+9GW8A-_Uj#]78!3OV7Sr?q_KMHX?Lg>h<boGZN5-gW7@H5o]HMp60S4oknE""c:tga~>endstream
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold /Encoding /WinAnsiEncoding >>
 endobj
 xref
-0 10
-0000000000 65535 f 
-0000000073 00000 n 
-0000000124 00000 n 
-0000000231 00000 n 
-0000000339 00000 n 
-0000000448 00000 n 
-0000000651 00000 n 
-0000000719 00000 n 
-0000001015 00000 n 
-0000001074 00000 n 
+0 7
+0000000000 65535 f
+0000000009 00000 n
+0000000058 00000 n
+0000000115 00000 n
+0000000258 00000 n
+0000003166 00000 n
+0000003265 00000 n
 trailer
-<<
-/ID 
-[<c02bfb7b4a87c60eae960b0c51feb8f0><c02bfb7b4a87c60eae960b0c51feb8f0>]
-% ReportLab generated PDF document -- digest (http://www.reportlab.com)
-
-/Info 7 0 R
-/Root 6 0 R
-/Size 10
->>
+<< /Size 7 /Root 1 0 R >>
 startxref
-2646
+3363
 %%EOF

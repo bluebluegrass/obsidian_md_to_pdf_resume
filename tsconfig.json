@@ -11,5 +11,5 @@
     "types": ["node"],
     "baseUrl": "."
   },
-  "include": ["main.ts", "src/**/*.ts", "tests/**/*.ts"]
+  "include": ["main.ts", "src/**/*.ts", "tests/**/*.ts", "scripts/**/*.ts"]
 }

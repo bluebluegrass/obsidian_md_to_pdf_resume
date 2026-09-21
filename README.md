@@ -1,95 +1,86 @@
 # Resume PDF Exporter
 
-Resume PDF Exporter is a desktop-only Obsidian plugin for people who keep job-application resumes as markdown notes and want a reliable, one-click PDF export workflow inside their vault.
+Write your resume in an Obsidian note, then export a polished one-page PDF with one click. No code, Python, or extra software is required.
 
-Instead of relying on generic markdown-to-PDF output, the plugin uses a resume-specific renderer with controlled typography, spacing, and section hierarchy. The renderer automatically adjusts scale so the resume stays on a single page whenever it can fit safely.
-
-## Features
-- One-click export from the status bar, file menu, or command palette
-- One-page PDF output with automatic scale adjustment to fit dense resumes
-- Status bar one-click button
-- File menu action on markdown files
-- Command palette command
-- Resume-specific markdown parsing and validation
-- Same-folder or fixed-folder PDF output
-- Optional open-after-export behavior
-
-## Why This Plugin Exists
-- Resume notes often need more control than general markdown export.
-- A resume should stay compact, readable, and ATS-friendly.
-- This plugin keeps the export flow inside Obsidian so you can edit and generate the final PDF without switching tools.
-
-## Screenshots
-
-### Export from the file menu
-Export a resume PDF directly from the Obsidian file menu.
+> This plugin currently works with **Obsidian Desktop** on macOS, Windows, and Linux. It is not available on mobile.
 
 ![Export resume PDF from the Obsidian file menu](docs/images/file-menu-export.png)
 
-### Plugin settings
-Configure the output mode, overwrite behavior, and open-after-export setting.
-
-![Resume PDF Exporter plugin settings](docs/images/plugin-settings.png)
-
-### Exported PDF result
-The plugin generates a one-page PDF version of the current resume note.
-
 ![Generated resume PDF output](docs/images/exported-pdf.png)
 
-Additional recommended screenshots for later:
-- `docs/images/status-bar-button.png`
-  - Show the visible one-click export button in the status bar.
+## Install
 
-## Requirements
-- Obsidian Desktop
+### From Obsidian Community Plugins
 
-## Resume Format
-- `# NAME`
-- first non-empty line after the title is the contact line
-- `##` sections
-- `###` role headings
-- `-` bullets
+Once the plugin is listed in the Community Plugins directory:
 
-## How It Fits On One Page
-- The renderer uses fixed resume styling and then automatically adjusts font sizes and spacing scale to keep the output on one page.
-- If the content can be fit safely, the plugin will shrink the layout until it fits.
-- If the content is too long to fit even after scaling, the export fails explicitly instead of generating a broken multi-page layout.
+1. Open **Settings → Community plugins** in Obsidian.
+2. Search for **Resume PDF Exporter**.
+3. Select **Install**, then **Enable**.
 
-## Usage
-- Open a resume note in Obsidian.
-- Click the status bar button, use the file menu, or run `Resume: Convert current note to PDF`.
-- The plugin writes a PDF next to the note by default.
-- The PDF is rendered to stay on one page, with the size adjusted automatically when needed.
+### From this GitHub repository
 
-## Installation
+1. Open the repository's [Releases page](https://github.com/bluebluegrass/obsidian_md_to_pdf_resume/releases/latest) and download `resume-pdf-exporter.zip` from the newest release.
+2. Unzip it. You will get a folder called `resume-pdf-exporter`.
+3. In your Obsidian vault, open the hidden `.obsidian` folder, then open or create `plugins`.
+4. Move the `resume-pdf-exporter` folder into `.obsidian/plugins/`.
+5. Restart Obsidian. Go to **Settings → Community plugins** and enable **Resume PDF Exporter**.
 
-### Manual installation
-1. Download the latest release assets:
-   - `main.js`
-   - `manifest.json`
-   - `styles.css`
-2. Create a folder named `resume-pdf-exporter` in your vault under `.obsidian/plugins/`.
-3. Copy the release assets into that folder.
-4. Enable the plugin under `Settings -> Community plugins`.
+The final path should look like this:
 
-## Sample Files
-- [Sample Resume Markdown](docs/images/Sample%20Resume.md)
-- [Sample Resume PDF](docs/images/Sample%20Resume.pdf)
-
-## Development
-```bash
-npm install
-npm run build
-npm test
+```text
+Your vault/
+└── .obsidian/
+    └── plugins/
+        └── resume-pdf-exporter/
+            ├── main.js
+            ├── manifest.json
+            └── styles.css
 ```
 
-## Community Submission
-See [docs/community-submission.md](docs/community-submission.md) for the exact release and review checklist used for the Obsidian community plugin directory.
+If Obsidian asks whether you trust community plugins, choose **Turn on community plugins** first.
 
-Additional publishing docs:
-- [Community PR draft](docs/obsidian-releases-submission-draft.md)
-- [Suggested `0.1.1` plan](docs/release-0.1.1-plan.md)
-- [Screenshot plan](docs/screenshots-plan.md)
+## Create your resume note
 
-## Notes
-- The plugin is intentionally scoped to resume notes, not general markdown export.
+Start with this format. The first `#` heading is your name and the next non-empty line is your contact information.
+
+```markdown
+# JANE DOE
+
+Amsterdam, Netherlands | jane@example.com | linkedin.com/in/janedoe
+
+## EXPERIENCE
+
+### Product Manager | Example Company | 2022–2026
+
+- Led a cross-functional team that launched a new customer onboarding experience.
+- Improved activation by 24% through user research and rapid experiments.
+
+## EDUCATION
+
+### University Name | Degree | 2018–2022
+```
+
+Use `##` for section titles, `###` for roles or education entries, and `-` for bullet points. A complete example is available in [Sample Resume Markdown](docs/images/Sample%20Resume.md).
+
+## Export a PDF
+
+1. Open your resume note.
+2. Click **Export resume PDF** in the status bar, right-click the note and choose **Export resume PDF**, or open the Command Palette and run **Resume: convert current note to PDF**.
+3. Your PDF is saved beside the note. You can change the save folder or have the PDF open automatically in **Settings → Resume PDF Exporter**.
+
+The exporter uses resume-specific typography and adjusts the scale to keep the document on one A4 page. If the note is still too long at the smallest readable size, it stops and asks you to shorten the content instead of creating a second page.
+
+## Troubleshooting
+
+- **The plugin does not appear in Settings:** confirm that the three files shown in the folder tree above are directly inside `resume-pdf-exporter`, then restart Obsidian.
+- **The export says the resume does not fit:** shorten one or more bullets, remove less relevant details, or use fewer sections.
+- **The exported PDF is not where you expected:** check the note's folder first. Change the output mode in **Settings → Resume PDF Exporter** if you prefer a dedicated folder.
+
+## For maintainers
+
+Run `npm install`, `npm run build`, and `npm test` before releasing. Pushing a version tag matching `manifest.json` creates a GitHub release containing the individual Obsidian assets and the easy-install ZIP. See [the release checklist](docs/community-submission.md).
+
+## License
+
+See [LICENSE](LICENSE).

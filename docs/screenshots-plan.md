@@ -26,7 +26,7 @@ Use these screenshots in the README before broader distribution and community su
 - open-after-export toggle
 
 **Why it matters**
-- Makes the export workflow understandable immediately
+- Shows the few choices users can make without exposing technical setup
 
 ## Screenshot 3: Export Result
 

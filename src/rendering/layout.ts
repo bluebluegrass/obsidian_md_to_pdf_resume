@@ -27,8 +27,9 @@ const BASE_LEAD = {
   bullet: 10.3
 } as const;
 
-const SPACE = {
-  header: 9.5,
+const SPACE: Record<RenderKind, number> = {
+  name: 9.5,
+  contact: 9.5,
   section: 2.6,
   role: 2.2,
   text: 1.3,
@@ -139,9 +140,9 @@ function buildLayout(document: ResumeDocument, scale: number): LayoutEntry[] {
 function measureHeight(entries: LayoutEntry[], scale: number): number {
   let y = PAGE_HEIGHT - TOP;
   y -= entries[0].lead * entries[0].lines.length;
-  y -= SPACE.header * scale;
+  y -= SPACE.name * scale;
   y -= entries[1].lead * entries[1].lines.length;
-  y -= SPACE.header * scale;
+  y -= SPACE.contact * scale;
 
   for (const entry of entries.slice(2)) {
     y -= entry.extraBefore;
@@ -243,7 +244,7 @@ export function createRenderLines(document: ResumeDocument): RenderLine[] {
       lines.push(itemText(entry, y, lineIndex));
       y -= entry.lead;
     });
-    y -= (index < 2 ? SPACE.header : SPACE[entry.kind]) * scale;
+    y -= SPACE[entry.kind] * scale;
   });
 
   if (y < BOTTOM) {
